@@ -41,3 +41,10 @@ example
 # generated native folders
 /ios
 /android
+
+# Superpowers brainstorming scratch state
+.superpowers/
+
+# Local Aula traffic captures (contain session cookies and personal data)
+docs/aula_api_crawl*.txt
+*.har
