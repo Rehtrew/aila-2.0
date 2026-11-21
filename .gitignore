@@ -48,3 +48,6 @@ example
 # Local Aula traffic captures (contain session cookies and personal data)
 docs/aula_api_crawl*.txt
 *.har
+
+# The demo video project (renders, caches with local paths) stays out of git
+/demo-video/

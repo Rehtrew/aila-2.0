@@ -4,11 +4,12 @@
     "slug": "aila",
     "scheme": "aila",
     "version": "1.0.0",
+    "icon": "./assets/images/icon.png",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "com.yourname.aila",
+      "bundleIdentifier": "me.rehtrew.aila",
       "supportsTablet": false,
       "infoPlist": {
         "NSLocalNetworkUsageDescription": "Aila uses the local network to connect to the Metro development server while debugging.",

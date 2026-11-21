@@ -654,11 +654,12 @@ const makeStyles = (c: Palette) =>
       letterSpacing: -0.3,
       marginTop: 2,
     },
-    filterScroll: { marginHorizontal: -spacing.xl },
+    filterScroll: { marginHorizontal: -spacing.xl, flexGrow: 0 },
     filterRow: {
       gap: spacing.sm,
       paddingHorizontal: spacing.xl,
       paddingVertical: spacing.xs,
+      alignItems: 'center',
     },
     chip: {
       flexDirection: 'row',
