@@ -1,5 +1,10 @@
 // src/lib/aula-api.ts
-import { AULA_API_BASE, AULA_METHODS } from '../constants/aula';
+import {
+  AULA_API_ROOT,
+  AULA_API_VERSION,
+  AULA_API_VERSION_LOOKAHEAD,
+  AULA_METHODS,
+} from '../constants/aula';
 import { getStoredTokens } from './token-storage';
 import { refreshTokens } from './auth';
 import type {
@@ -17,6 +22,18 @@ import type {
 } from './aula-types';
 
 type Params = Record<string, string | string[]>;
+
+// The API version in use. It starts at the one this build knows; when Aula has
+// retired that one, aulaFetch meets a 410 and moves up (see constants/aula.ts).
+let apiVersion = AULA_API_VERSION;
+
+export function getApiVersion(): number {
+  return apiVersion;
+}
+
+function apiBase(version = apiVersion): string {
+  return `${AULA_API_ROOT}v${version}/`;
+}
 
 // Aula uses double-submit CSRF: the server sets a `Csrfp-Token` cookie on the
 // bootstrap calls (profiles.*), and every other method must echo it back in a
@@ -45,7 +62,7 @@ async function ensureCsrf(): Promise<void> {
     // Lazy require: the native module isn't in the binary until the next build,
     // so importing eagerly would crash startup. Loaded only when first needed.
     const CookieManager = require('@react-native-cookies/cookies').default;
-    const cookies = await CookieManager.get(AULA_API_BASE);
+    const cookies = await CookieManager.get(apiBase());
     for (const [name, cookie] of Object.entries(cookies ?? {}) as [string, { value?: string }][]) {
       if (name.toLowerCase() === 'csrfp-token' && cookie?.value) {
         csrfToken = cookie.value;
@@ -99,7 +116,8 @@ async function aulaFetch<T>(method: string, params: Params = {}, opts: FetchOpts
   if (sentCsrf) headers['csrfp-token'] = sentCsrf;
   if (isPost) headers['Content-Type'] = 'application/json';
 
-  const response = await fetch(`${AULA_API_BASE}?${buildQuery(method, token, params)}`, {
+  const version = apiVersion;
+  const response = await fetch(`${apiBase(version)}?${buildQuery(method, token, params)}`, {
     method: isPost ? 'POST' : 'GET',
     headers,
     body: isPost ? JSON.stringify(opts.body) : undefined,
@@ -107,6 +125,20 @@ async function aulaFetch<T>(method: string, params: Params = {}, opts: FetchOpts
   captureCsrf(response);
 
   if (response.ok) return response.json() as Promise<T>;
+
+  // 410: Aula has retired this API version, and nothing was done. Move up one
+  // version and send the request again. If another request has moved up in the
+  // meantime, follow it instead of moving up again.
+  if (response.status === 410) {
+    if (apiVersion === version) {
+      if (version >= AULA_API_VERSION + AULA_API_VERSION_LOOKAHEAD) {
+        apiVersion = AULA_API_VERSION; // look again from the start next time
+        throw new Error('Aula har skiftet API-version, og appen kunne ikke finde den nye');
+      }
+      apiVersion = version + 1;
+    }
+    return aulaFetch<T>(method, params, opts);
+  }
 
   const body = await response.text().catch(() => '');
   const { code } = statusCode(body);
@@ -133,7 +165,7 @@ async function aulaFetch<T>(method: string, params: Params = {}, opts: FetchOpts
   if (response.status === 403 && !sentCsrf && !opts.retriedCsrf) {
     try {
       const r = await fetch(
-        `${AULA_API_BASE}?${buildQuery('profiles.getProfilesByLogin', token, {
+        `${apiBase()}?${buildQuery('profiles.getProfilesByLogin', token, {
           'portalRoles[]': 'guardian',
         })}`,
         { headers: { Accept: 'application/json' } },

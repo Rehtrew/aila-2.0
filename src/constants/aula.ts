@@ -10,11 +10,17 @@ export const AULA_OAUTH = {
 } as const;
 
 // app-private.aula.dk is only the OAuth redirect URI (an S3 static site).
-// The actual API lives on www.aula.dk. The version is bumped periodically and
-// old versions are decommissioned: they return HTTP 410 / code:10 ("Gone") for
-// everyone, authenticated or not. As of 2026-06 the live version is v23; v22 and
-// below are dead. v23 unauthenticated returns 403 / code:448.
-export const AULA_API_BASE = 'https://www.aula.dk/api/v23/';
+// The actual API lives on www.aula.dk/api/v<N>/. Aula bumps N every few months
+// and retires the old version at once. Every version except the live one answers
+// HTTP 410 / code:10 ("Gone"), authenticated or not: the retired ones and the ones
+// that don't exist yet alike. The live one answers 403 / code:448 without a login.
+// Checked 2026-11-21: v25 is live; v24 and below, and v26 and up, answer 410.
+// aula-api.ts moves up from AULA_API_VERSION by itself when it meets a 410, so a
+// new version doesn't break the app; raising the number here saves those requests.
+export const AULA_API_ROOT = 'https://www.aula.dk/api/';
+export const AULA_API_VERSION = 25;
+// How many versions past AULA_API_VERSION the client tries before it gives up.
+export const AULA_API_VERSION_LOOKAHEAD = 10;
 
 export const AULA_METHODS = {
   profilesByLogin: 'profiles.getProfilesByLogin',

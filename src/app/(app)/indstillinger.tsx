@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import Constants from 'expo-constants';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useAula } from '../../lib/aula-context';
+import { getApiVersion } from '../../lib/aula-api';
 import { clearTokens } from '../../lib/token-storage';
 import { useTheme, useThemedStyles } from '../../theme/ThemeContext';
 import { cardSurface, font, radius, shade, spacing, tint, type Palette, type ThemeMode } from '../../theme';
@@ -148,7 +149,7 @@ export default function SettingsScreen() {
             <View style={styles.cardSep} />
             <View style={styles.infoRow}>
               <Text style={styles.infoKey}>Aula API</Text>
-              <Text style={styles.infoValue}>v23</Text>
+              <Text style={styles.infoValue}>v{getApiVersion()}</Text>
             </View>
           </View>
         </Animated.View>
