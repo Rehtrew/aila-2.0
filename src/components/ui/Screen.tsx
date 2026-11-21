@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   ViewStyle,
+  type ScrollViewInstance,
 } from 'react-native';
 import { SafeAreaView, type Edge } from 'react-native-safe-area-context';
 import { useTheme, useThemedStyles } from '../../theme/ThemeContext';
@@ -20,7 +21,7 @@ interface ScreenProps {
   onRefresh?: () => void;
   edges?: readonly Edge[];
   padded?: boolean;
-  scrollRef?: RefObject<ScrollView>;
+  scrollRef?: RefObject<ScrollViewInstance | null>;
 }
 
 export function Screen({

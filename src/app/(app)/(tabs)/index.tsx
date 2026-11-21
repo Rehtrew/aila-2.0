@@ -1,6 +1,6 @@
 // src/app/(app)/(tabs)/index.tsx — Dashboard (Hjem) + opslagstavle
 import { useCallback, useEffect, useMemo, useRef, useState, type ComponentProps, type ReactNode } from 'react';
-import { AppState, Dimensions, LayoutAnimation, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { AppState, Dimensions, LayoutAnimation, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 import { useScrollToTop } from 'expo-router';
 import { Image } from 'expo-image';
 import { SymbolView } from 'expo-symbols';
@@ -149,7 +149,7 @@ export default function DashboardScreen() {
   // Measured via onLayout on the first child card — exact midpoint of that card.
   const [cardMidY, setCardMidY] = useState<number | null>(null);
   const gradientEndY = cardMidY ?? headerPad + 180;
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   useScrollToTop(scrollRef);
   const headerScrollY = useHeaderScrollY();
   const scrollHandler = useAnimatedScrollHandler({
@@ -504,7 +504,7 @@ export default function DashboardScreen() {
       />
 
     <Animated.ScrollView
-      ref={scrollRef as React.RefObject<Animated.ScrollView>}
+      ref={scrollRef}
       onScroll={scrollHandler}
       scrollEventThrottle={16}
       contentContainerStyle={[styles.contentContainer, { paddingTop: headerPad }]}

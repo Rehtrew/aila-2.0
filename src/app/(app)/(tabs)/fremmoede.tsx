@@ -1,6 +1,6 @@
 // src/app/(app)/(tabs)/fremmoede.tsx — Presence: who arrived, who went home, who picks up.
 import { useEffect, useMemo, useRef, useState, type ComponentProps } from 'react';
-import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, RefreshControl, ScrollView, StyleSheet, Text, View, type ScrollViewInstance } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useScrollToTop } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
@@ -112,7 +112,7 @@ export default function PresenceScreen() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const scrollRef = useRef<ScrollView>(null);
+  const scrollRef = useRef<ScrollViewInstance>(null);
   useScrollToTop(scrollRef);
 
   const childIds = useMemo(() => kids.map((k) => k.id), [kids]);

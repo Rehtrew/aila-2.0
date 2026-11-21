@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Text,
   View,
+  type ScrollViewInstance,
 } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -25,6 +26,7 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { PressableScale } from './ui/PressableScale';
 import { mediaFull, mediaThumb } from '../lib/media';
@@ -54,7 +56,7 @@ function ZoomablePage({
 }: {
   item: AulaMediaItem;
   isActive: boolean;
-  anyZoomedSV: Animated.SharedValue<boolean>;
+  anyZoomedSV: SharedValue<boolean>;
   onClose: () => void;
   onZoomChange: (z: boolean) => void;
 }) {
@@ -200,7 +202,7 @@ export function MediaViewer({ items, initialIndex, onClose, onInfo }: Props) {
   const [anyZoomed, setAnyZoomed] = useState(false);
 
   const anyZoomedSV = useSharedValue(false);
-  const filmRef = useRef<ScrollView>(null);
+  const filmRef = useRef<ScrollViewInstance>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
 

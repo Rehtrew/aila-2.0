@@ -268,7 +268,7 @@ export default function GalleryScreen() {
                   : 'Billeder og video fra institutionen vises her.'}
               </Text>
             </View>
-          ) : null
+          ) : undefined
         }
         renderItem={({ item, index }) => {
           const thumb = albumThumb(item);
